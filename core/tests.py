@@ -1,6 +1,7 @@
 from datetime import timedelta
 
 from django.contrib.auth import get_user_model
+from django.core.management import call_command
 from django.core.exceptions import ValidationError
 from django.test import TestCase
 from django.utils import timezone
@@ -95,3 +96,32 @@ class VoteModelTests(TestCase):
         self.assertEqual(self.choice_one.votes_count, 0)
         self.user.profile.refresh_from_db()
         self.assertEqual(self.user.profile.total_rating, 0)
+
+
+class BootstrapDemoSiteCommandTests(TestCase):
+    def test_command_creates_demo_content_and_is_idempotent(self):
+        call_command("bootstrap_demo_site")
+        first_counts = {
+            "users": User.objects.count(),
+            "polls": Poll.objects.count(),
+            "choices": Choice.objects.count(),
+            "votes": Vote.objects.count(),
+            "results": LearningResult.objects.count(),
+        }
+
+        admin_user = User.objects.get(username="admin_demo")
+        self.assertTrue(admin_user.is_staff)
+        self.assertTrue(admin_user.is_superuser)
+        self.assertTrue(User.objects.filter(username="vera").exists())
+        self.assertGreaterEqual(first_counts["polls"], 3)
+        self.assertGreaterEqual(first_counts["votes"], 6)
+
+        call_command("bootstrap_demo_site")
+        second_counts = {
+            "users": User.objects.count(),
+            "polls": Poll.objects.count(),
+            "choices": Choice.objects.count(),
+            "votes": Vote.objects.count(),
+            "results": LearningResult.objects.count(),
+        }
+        self.assertEqual(first_counts, second_counts)

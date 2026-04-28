@@ -178,9 +178,15 @@ Render — это облачная платформа, которая умеет
 - `DATABASE_URL` поддерживается для PostgreSQL;
 - `ALLOWED_HOSTS` и `CSRF_TRUSTED_ORIGINS` умеют подхватывать `RENDER_EXTERNAL_HOSTNAME`;
 - версия Python для Render зафиксирована;
-- `collectstatic` и `migrate` вынесены в pre-deploy команду.
+- `collectstatic` выполняется в `buildCommand`, а `migrate` — перед запуском `gunicorn`.
 - в `render.yaml` сразу описаны Web Service и PostgreSQL база данных;
 - для быстрого старта указан `free` plan для веб-сервиса и базы данных.
+- при старте Render автоматически запускается команда `bootstrap_demo_site`, которая создает демонстрационный контент и учетные записи.
+
+### Демо-доступ после деплоя
+
+- администратор: `admin_demo` / `SkazkaAdmin2026!`
+- ученик: `vera` / `SkazkaStudent2026!`
 
 ### Автоматический деплой через Git
 

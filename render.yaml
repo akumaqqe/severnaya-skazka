@@ -4,7 +4,7 @@ services:
     runtime: python
     plan: free
     buildCommand: pip install -r requirements.txt && python manage.py collectstatic --noinput
-    startCommand: sh -c 'python manage.py migrate && gunicorn folk_school.wsgi:application'
+    startCommand: sh -c 'python manage.py migrate && python manage.py bootstrap_demo_site && gunicorn folk_school.wsgi:application'
     envVars:
       - key: SECRET_KEY
         generateValue: true
@@ -20,6 +20,14 @@ services:
         value: "True"
       - key: PYTHON_VERSION
         value: 3.12.10
+      - key: DEMO_ADMIN_USERNAME
+        value: admin_demo
+      - key: DEMO_ADMIN_PASSWORD
+        value: SkazkaAdmin2026!
+      - key: DEMO_STUDENT_USERNAME
+        value: vera
+      - key: DEMO_STUDENT_PASSWORD
+        value: SkazkaStudent2026!
       - key: DATABASE_URL
         fromDatabase:
           name: severnaya-skazka-db
