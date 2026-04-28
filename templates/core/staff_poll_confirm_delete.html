@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block title %}Удаление голосования | Северная сказка{% endblock %}
+
+{% block content %}
+    <section class="page-header">
+        <h1>Удаление голосования</h1>
+        <p>Это действие удалит голосование и связанные с ним варианты ответов и голоса.</p>
+    </section>
+
+    <section class="form-card">
+        <p><strong>{{ object.title }}</strong></p>
+        <form method="post">
+            {% csrf_token %}
+            <div class="actions-row">
+                <button class="button-danger" type="submit">Удалить</button>
+                <a class="button button-muted" href="{% url 'staff_poll_list' %}">Отмена</a>
+            </div>
+        </form>
+    </section>
+{% endblock %}

@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+{% block title %}Рейтинг | Северная сказка{% endblock %}
+
+{% block content %}
+    <section class="page-header">
+        <h1>Общий рейтинг учеников</h1>
+        <p>Рейтинг складывается из баллов за выполненные задания и бонусного балла за каждое участие в голосовании.</p>
+    </section>
+
+    {% if profiles %}
+        <div class="table-card table-wrap">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Место</th>
+                        <th>Ученик</th>
+                        <th>Возраст</th>
+                        <th>Класс / группа</th>
+                        <th>Задания</th>
+                        <th>Голосования</th>
+                        <th>Общий рейтинг</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for profile in profiles %}
+                        <tr>
+                            <td>{{ forloop.counter }}</td>
+                            <td>{{ profile.user.get_full_name|default:profile.user.username }}</td>
+                            <td>{{ profile.age }}</td>
+                            <td>{{ profile.class_group }}</td>
+                            <td>{{ profile.learning_points }}</td>
+                            <td>{{ profile.vote_points }}</td>
+                            <td>{{ profile.total_rating }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <div class="empty-state">Рейтинг появится после добавления первых результатов.</div>
+    {% endif %}
+{% endblock %}

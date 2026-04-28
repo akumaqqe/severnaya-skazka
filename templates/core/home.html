@@ -1,0 +1,100 @@
+{% extends "base.html" %}
+
+{% block title %}Главная | Северная сказка{% endblock %}
+
+{% block content %}
+    <section class="hero">
+        <div class="hero-card">
+            <span class="pill">Творчество и доброта</span>
+            <h1>Знакомимся с северной культурой через игру, рисунок и добрые дела</h1>
+            <p>
+                Этот сайт помогает детям узнавать народные традиции Севера, участвовать в
+                голосованиях, отмечать свои успехи и радоваться общим достижениям.
+            </p>
+            <div class="hero-actions">
+                <a class="button" href="{% url 'poll_list' %}">Посмотреть голосования</a>
+                {% if user.is_authenticated %}
+                    <a class="button button-secondary" href="{% url 'dashboard' %}">Открыть личный кабинет</a>
+                {% else %}
+                    <a class="button button-secondary" href="{% url 'register' %}">Зарегистрироваться</a>
+                {% endif %}
+            </div>
+        </div>
+        <aside class="hero-side">
+            <h2>Что можно делать на сайте</h2>
+            <p>Выбирать любимые сказки и узоры, отправлять результаты обучения и получать баллы за учебные успехи и участие в голосованиях.</p>
+            <div class="actions-row">
+                <span class="pill">Просто</span>
+                <span class="pill pill-warning">Понятно детям</span>
+                <span class="pill">Безопасно</span>
+            </div>
+        </aside>
+    </section>
+
+    <section class="grid-4">
+        <article class="stats-card">
+            <strong>{{ students_count }}</strong>
+            <span>участников уже в программе</span>
+        </article>
+        <article class="stats-card">
+            <strong>{{ active_polls_count }}</strong>
+            <span>актуальных голосований</span>
+        </article>
+        <article class="stats-card">
+            <strong>{{ votes_count }}</strong>
+            <span>отправленных голосов</span>
+        </article>
+        <article class="stats-card">
+            <strong>{{ successful_results_count }}</strong>
+            <span>успешных результатов обучения</span>
+        </article>
+    </section>
+
+    <h2 class="section-title">Актуальные голосования</h2>
+    {% if active_polls %}
+        <section class="card-list">
+            {% for poll in active_polls %}
+                <article class="card">
+                    <div class="card-header">
+                        <div>
+                            <h3>{{ poll.title }}</h3>
+                            <p class="muted">{{ poll.description|default:"Описание скоро появится." }}</p>
+                        </div>
+                        <span class="pill">до {{ poll.end_date|date:"d.m.Y H:i" }}</span>
+                    </div>
+                    <a class="button" href="{% url 'poll_detail' poll.pk %}">Открыть голосование</a>
+                </article>
+            {% endfor %}
+        </section>
+    {% else %}
+        <div class="empty-state">Сейчас нет активных голосований. Загляните немного позже.</div>
+    {% endif %}
+
+    <h2 class="section-title">Топ учеников</h2>
+    {% if top_students %}
+        <div class="table-card table-wrap">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Место</th>
+                        <th>Ученик</th>
+                        <th>Класс / группа</th>
+                        <th>Общий рейтинг</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for profile in top_students %}
+                        <tr>
+                            <td>{{ forloop.counter }}</td>
+                            <td>{{ profile.user.get_full_name|default:profile.user.username }}</td>
+                            <td>{{ profile.class_group }}</td>
+                            <td>{{ profile.total_rating }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <div class="empty-state">Рейтинг появится после добавления первых результатов.</div>
+    {% endif %}
+{% endblock %}

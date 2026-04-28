@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block title %}Голосования | Северная сказка{% endblock %}
+
+{% block content %}
+    <section class="page-header">
+        <h1>Голосования</h1>
+        <p>Выберите интересный опрос и проголосуйте. Один ученик может отправить только один голос в каждом активном голосовании.</p>
+    </section>
+
+    {% if polls %}
+        <section class="card-list">
+            {% for poll in polls %}
+                <article class="card">
+                    <div class="card-header">
+                        <div>
+                            <h2>{{ poll.title }}</h2>
+                            <p class="muted">{{ poll.description|default:"Описание голосования не заполнено." }}</p>
+                        </div>
+                        <span class="pill">до {{ poll.end_date|date:"d.m.Y H:i" }}</span>
+                    </div>
+                    <div class="actions-row">
+                        <a class="button" href="{% url 'poll_detail' poll.pk %}">Участвовать</a>
+                    </div>
+                </article>
+            {% endfor %}
+        </section>
+    {% else %}
+        <div class="empty-state">Активных голосований пока нет.</div>
+    {% endif %}
+{% endblock %}

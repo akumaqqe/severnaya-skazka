@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+
+{% block title %}Управление голосованиями | Северная сказка{% endblock %}
+
+{% block content %}
+    <section class="page-header">
+        <h1>Управление голосованиями</h1>
+        <p>Создавайте новые опросы, редактируйте существующие и просматривайте их статистику.</p>
+        <div class="actions-row">
+            <a class="button" href="{% url 'staff_poll_create' %}">Создать голосование</a>
+        </div>
+    </section>
+
+    {% if polls %}
+        <div class="table-card table-wrap">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Название</th>
+                        <th>Статус</th>
+                        <th>Дата окончания</th>
+                        <th>Голосов</th>
+                        <th>Действия</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for poll in polls %}
+                        <tr>
+                            <td>{{ poll.title }}</td>
+                            <td>
+                                {% if poll.is_open %}
+                                    <span class="pill">Открыто</span>
+                                {% elif poll.is_active %}
+                                    <span class="pill pill-warning">Завершено</span>
+                                {% else %}
+                                    <span class="pill pill-danger">Отключено</span>
+                                {% endif %}
+                            </td>
+                            <td>{{ poll.end_date|date:"d.m.Y H:i" }}</td>
+                            <td>{{ poll.votes_total }}</td>
+                            <td>
+                                <div class="actions-row">
+                                    <a class="button button-muted" href="{% url 'poll_detail' poll.pk %}">Просмотр</a>
+                                    <a class="button" href="{% url 'staff_poll_update' poll.pk %}">Изменить</a>
+                                    <a class="button button-danger" href="{% url 'staff_poll_delete' poll.pk %}">Удалить</a>
+                                </div>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <div class="empty-state">Голосования еще не созданы.</div>
+    {% endif %}
+{% endblock %}

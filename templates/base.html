@@ -1,0 +1,59 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %}Северная сказка{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+    <div class="background-shape background-shape-left"></div>
+    <div class="background-shape background-shape-right"></div>
+
+    <header class="topbar">
+        <div class="container topbar-inner">
+            <a class="brand" href="{% url 'home' %}">
+                <span class="brand-mark">С</span>
+                <span class="brand-text">Северная сказка</span>
+            </a>
+            <nav class="nav">
+                <a href="{% url 'home' %}">Главная</a>
+                <a href="{% url 'poll_list' %}">Голосования</a>
+                <a href="{% url 'rating' %}">Рейтинг</a>
+                {% if user.is_authenticated %}
+                    <a href="{% url 'dashboard' %}">Личный кабинет</a>
+                    <a href="{% url 'logout' %}">Выход</a>
+                {% else %}
+                    <a href="{% url 'login' %}">Вход</a>
+                    <a href="{% url 'register' %}">Регистрация</a>
+                {% endif %}
+                {% if user.is_staff %}
+                    <a href="{% url 'admin_reports' %}">Отчеты</a>
+                    <a href="{% url 'staff_poll_list' %}">Управление</a>
+                    <a href="/admin/">Админ-панель</a>
+                {% endif %}
+            </nav>
+        </div>
+    </header>
+
+    <main class="container page-content">
+        {% if messages %}
+            <section class="messages">
+                {% for message in messages %}
+                    <div class="message {{ message.tags|default:'info' }}">{{ message }}</div>
+                {% endfor %}
+            </section>
+        {% endif %}
+
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="footer">
+        <div class="container footer-inner">
+            <p>Сайт учебной программы для знакомства детей с северной народной культурой.</p>
+            <p>Добро, дружба, творчество и любовь к родному краю.</p>
+        </div>
+    </footer>
+</body>
+</html>

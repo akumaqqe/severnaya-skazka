@@ -1,0 +1,121 @@
+{% extends "base.html" %}
+
+{% block title %}Личный кабинет | Северная сказка{% endblock %}
+
+{% block content %}
+    <section class="page-header">
+        <h1>Личный кабинет</h1>
+        <p>Здесь собраны ваши результаты, история голосований и место в общем рейтинге.</p>
+    </section>
+
+    <section class="grid-4">
+        <article class="stats-card">
+            <strong>{{ profile.total_rating }}</strong>
+            <span>общий рейтинг</span>
+        </article>
+        <article class="stats-card">
+            <strong>{{ user_rank|default:"-" }}</strong>
+            <span>место в общем списке</span>
+        </article>
+        <article class="stats-card">
+            <strong>{{ successful_results_count }}</strong>
+            <span>успешно пройденных заданий</span>
+        </article>
+        <article class="stats-card">
+            <strong>{{ vote_points }}</strong>
+            <span>баллов за участие в голосованиях</span>
+        </article>
+    </section>
+
+    <section class="grid-2">
+        <article class="card">
+            <h2>Профиль ученика</h2>
+            <p><strong>Логин:</strong> {{ user.username }}</p>
+            <p><strong>Имя:</strong> {{ user.get_full_name|default:"Не указано" }}</p>
+            <p><strong>Возраст:</strong> {{ profile.age }}</p>
+            <p><strong>Класс / группа:</strong> {{ profile.class_group }}</p>
+            <p><strong>Дата регистрации:</strong> {{ profile.registered_at|date:"d.m.Y H:i" }}</p>
+            <p><strong>Баллы за задания:</strong> {{ learning_points }}</p>
+            <p><strong>Баллы за голосования:</strong> {{ vote_points }}</p>
+        </article>
+
+        <article class="card">
+            <h2>Быстрые действия</h2>
+            <p class="muted">Общий рейтинг складывается из баллов за задания и одного бонусного балла за каждое участие в голосовании.</p>
+            <div class="actions-row">
+                <a class="button" href="{% url 'learning_result_add' %}">Добавить результат</a>
+                <a class="button button-secondary" href="{% url 'poll_list' %}">Открыть голосования</a>
+                <a class="button button-muted" href="{% url 'rating' %}">Посмотреть рейтинг</a>
+            </div>
+        </article>
+    </section>
+
+    <h2 class="section-title">Мои результаты</h2>
+    {% if learning_results %}
+        <div class="table-card table-wrap">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Этап / задание</th>
+                        <th>Баллы</th>
+                        <th>Статус</th>
+                        <th>Дата</th>
+                        <th>Действия</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for result in learning_results %}
+                        <tr>
+                            <td>{{ result.stage_title }}</td>
+                            <td>{{ result.points }}</td>
+                            <td>
+                                {% if result.is_successful %}
+                                    <span class="pill">Успешно</span>
+                                {% else %}
+                                    <span class="pill pill-warning">В процессе</span>
+                                {% endif %}
+                            </td>
+                            <td>{{ result.created_at|date:"d.m.Y H:i" }}</td>
+                            <td>
+                                <div class="actions-row">
+                                    <a class="button button-muted" href="{% url 'learning_result_edit' result.pk %}">Изменить</a>
+                                    <a class="button button-danger" href="{% url 'learning_result_delete' result.pk %}">Удалить</a>
+                                </div>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <div class="empty-state">У вас пока нет добавленных результатов.</div>
+    {% endif %}
+
+    <h2 class="section-title">История голосований</h2>
+    {% if vote_history %}
+        <div class="table-card table-wrap">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Голосование</th>
+                        <th>Ваш ответ</th>
+                        <th>Баллы в рейтинг</th>
+                        <th>Дата</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for vote in vote_history %}
+                        <tr>
+                            <td>{{ vote.poll.title }}</td>
+                            <td>{{ vote.choice.text }}</td>
+                            <td>+1</td>
+                            <td>{{ vote.voted_at|date:"d.m.Y H:i" }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <div class="empty-state">История голосований пока пуста.</div>
+    {% endif %}
+{% endblock %}

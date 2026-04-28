@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+
+{% block title %}{{ poll.title }} | Северная сказка{% endblock %}
+
+{% block content %}
+    <section class="page-header">
+        <span class="pill {% if poll.is_open %}{% else %}pill-danger{% endif %}">
+            {% if poll.is_open %}Голосование открыто{% else %}Голосование завершено{% endif %}
+        </span>
+        <h1>{{ poll.title }}</h1>
+        <p>{{ poll.description|default:"Описание голосования не заполнено." }}</p>
+        <p class="muted">Дата окончания: {{ poll.end_date|date:"d.m.Y H:i" }}</p>
+    </section>
+
+    {% if not user.is_authenticated %}
+        <div class="card">
+            <h2>Чтобы проголосовать, нужно войти</h2>
+            <p class="muted">После входа вы сможете выбрать один вариант ответа и отправить свой голос.</p>
+            <div class="actions-row">
+                <a class="button" href="{% url 'login' %}">Войти</a>
+                <a class="button button-secondary" href="{% url 'register' %}">Регистрация</a>
+            </div>
+        </div>
+    {% endif %}
+
+    {% if can_vote %}
+        <section class="form-card">
+            <h2>Выберите ответ</h2>
+            <form method="post" action="{% url 'vote_poll' poll.pk %}">
+                {% csrf_token %}
+                {{ form.non_field_errors }}
+                <div class="radio-list">
+                    {% for radio in form.choice %}
+                        <label class="radio-option">
+                            {{ radio.tag }}
+                            <span>{{ radio.choice_label }}</span>
+                        </label>
+                    {% endfor %}
+                </div>
+                {{ form.choice.errors }}
+                <button type="submit">Отправить голос</button>
+            </form>
+        </section>
+    {% elif has_voted %}
+        <div class="card">
+            <h2>Спасибо за участие</h2>
+            <p>Ваш выбор: <strong>{{ user_vote.choice.text }}</strong></p>
+        </div>
+    {% elif user.is_authenticated and not poll.is_open %}
+        <div class="card">
+            <h2>Голосование закрыто</h2>
+            <p class="muted">Новые ответы больше не принимаются.</p>
+        </div>
+    {% endif %}
+
+    {% if can_view_results %}
+        <section class="card">
+            <div class="card-header">
+                <div>
+                    <h2>Результаты</h2>
+                    <p class="muted">Всего голосов: {{ total_votes }}</p>
+                </div>
+            </div>
+            <div class="progress-list">
+                {% for result in results %}
+                    <div>
+                        <div class="card-header">
+                            <strong>{{ result.text }}</strong>
+                            <span>{{ result.votes_count }} голосов • {{ result.percentage }}%</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: {{ result.percentage }}%;"></div>
+                        </div>
+                    </div>
+                {% empty %}
+                    <p class="muted">По этому голосованию пока нет результатов.</p>
+                {% endfor %}
+            </div>
+        </section>
+    {% else %}
+        <div class="card">
+            <h2>Результаты пока скрыты</h2>
+            <p class="muted">Чтобы сохранить честность голосования, текущая статистика откроется после вашего голоса.</p>
+        </div>
+    {% endif %}
+{% endblock %}

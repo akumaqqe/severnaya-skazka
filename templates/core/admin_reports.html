@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+
+{% block title %}Отчеты администратора | Северная сказка{% endblock %}
+
+{% block content %}
+    <section class="page-header">
+        <h1>Отчеты администратора</h1>
+        <p>Статистика по ученикам, прохождению программы и голосованиям.</p>
+    </section>
+
+    <section class="grid-3">
+        <article class="stats-card">
+            <strong>{{ successful_students_count }}</strong>
+            <span>детей успешно прошли хотя бы одно задание</span>
+        </article>
+        <article class="stats-card">
+            <strong>{{ students|length }}</strong>
+            <span>учеников в системе</span>
+        </article>
+        <article class="stats-card">
+            <strong>{{ successful_results_count }}</strong>
+            <span>успешных результатов обучения</span>
+        </article>
+    </section>
+
+    <h2 class="section-title">Ученики и рейтинг</h2>
+    <div class="table-card table-wrap">
+        <table>
+            <thead>
+                <tr>
+                    <th>Место</th>
+                    <th>Ученик</th>
+                    <th>Возраст</th>
+                    <th>Класс / группа</th>
+                    <th>Задания</th>
+                    <th>Голосования</th>
+                    <th>Общий рейтинг</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for profile in students %}
+                    <tr>
+                        <td>{{ forloop.counter }}</td>
+                        <td>{{ profile.user.get_full_name|default:profile.user.username }}</td>
+                        <td>{{ profile.age }}</td>
+                        <td>{{ profile.class_group }}</td>
+                        <td>{{ profile.learning_points }}</td>
+                        <td>{{ profile.vote_points }}</td>
+                        <td>{{ profile.total_rating }}</td>
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="7">Пока нет зарегистрированных учеников.</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <h2 class="section-title">Статистика голосований</h2>
+    {% if poll_statistics %}
+        <section class="card-list">
+            {% for item in poll_statistics %}
+                <article class="card">
+                    <div class="card-header">
+                        <div>
+                            <h3>{{ item.poll.title }}</h3>
+                            <p class="muted">{{ item.poll.description|default:"Описание не заполнено." }}</p>
+                        </div>
+                        <span class="pill">Всего голосов: {{ item.total_votes }}</span>
+                    </div>
+                    <div class="progress-list">
+                        {% for result in item.results %}
+                            <div>
+                                <div class="card-header">
+                                    <strong>{{ result.text }}</strong>
+                                    <span>{{ result.votes_count }} голосов • {{ result.percentage }}%</span>
+                                </div>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: {{ result.percentage }}%;"></div>
+                                </div>
+                            </div>
+                        {% empty %}
+                            <p class="muted">По этому голосованию еще не голосовали.</p>
+                        {% endfor %}
+                    </div>
+                </article>
+            {% endfor %}
+        </section>
+    {% else %}
+        <div class="empty-state">Голосования пока не созданы.</div>
+    {% endif %}
+{% endblock %}

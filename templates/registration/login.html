@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block title %}Вход | Северная сказка{% endblock %}
+
+{% block content %}
+    <section class="page-header">
+        <h1>Вход на сайт</h1>
+        <p>Введите логин и пароль, чтобы открыть голосования, личный кабинет и рейтинг.</p>
+    </section>
+
+    <section class="form-card">
+        <form method="post">
+            {% csrf_token %}
+            {{ form.non_field_errors }}
+            {% for field in form %}
+                <div>
+                    {{ field.label_tag }}
+                    {{ field }}
+                    {{ field.errors }}
+                </div>
+            {% endfor %}
+            <div class="actions-row">
+                <button type="submit">Войти</button>
+                <a class="button button-secondary" href="{% url 'register' %}">Регистрация</a>
+            </div>
+        </form>
+    </section>
+{% endblock %}
