@@ -50,13 +50,13 @@
 ## Установка
 
 ```bash
-cd "/Users/alfaalfa/Documents/New project"
+cd <папка_проекта>
 python -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
 ```
 
-Для Render в репозиторий добавлен файл [`.python-version`](/Users/alfaalfa/Documents/New%20project/.python-version) со значением `3.12`, чтобы сервис не использовал слишком новую версию Python по умолчанию.
+Для Render в репозиторий добавлен файл `.python-version` со значением `3.12`, чтобы сервис не использовал слишком новую версию Python по умолчанию.
 
 ## Настройка окружения
 
@@ -148,6 +148,8 @@ python manage.py runserver
 
 Проект подготовлен к размещению через `render.yaml`.
 
+[![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/akumaqqe/severnaya-skazka)
+
 ### Что такое Render через Git
 
 Render — это облачная платформа, которая умеет брать ваш проект прямо из Git-репозитория и запускать его как сайт.
@@ -177,6 +179,8 @@ Render — это облачная платформа, которая умеет
 - `ALLOWED_HOSTS` и `CSRF_TRUSTED_ORIGINS` умеют подхватывать `RENDER_EXTERNAL_HOSTNAME`;
 - версия Python для Render зафиксирована;
 - `collectstatic` и `migrate` вынесены в pre-deploy команду.
+- в `render.yaml` сразу описаны Web Service и PostgreSQL база данных;
+- для быстрого старта указан `free` plan для веб-сервиса и базы данных.
 
 ### Автоматический деплой через Git
 
