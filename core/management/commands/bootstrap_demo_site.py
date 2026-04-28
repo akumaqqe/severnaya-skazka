@@ -16,6 +16,8 @@ class Command(BaseCommand):
     help = "Создает демонстрационные данные для готового сайта."
 
     def handle(self, *args, **options):
+        verbosity = options.get("verbosity", 1)
+
         with transaction.atomic():
             admin_user = self.ensure_user(
                 username=os.environ.get("DEMO_ADMIN_USERNAME", "admin_demo"),
@@ -100,15 +102,16 @@ class Command(BaseCommand):
             for user in (vera, liza, egor):
                 user.profile.update_total_rating()
 
-        self.stdout.write(self.style.SUCCESS("Демо-данные сайта готовы."))
-        self.stdout.write(
-            f"Администратор: {admin_user.username} / "
-            f"{os.environ.get('DEMO_ADMIN_PASSWORD', 'SkazkaAdmin2026!')}"
-        )
-        self.stdout.write(
-            f"Ученик: {vera.username} / "
-            f"{os.environ.get('DEMO_STUDENT_PASSWORD', 'SkazkaStudent2026!')}"
-        )
+        if verbosity > 0:
+            self.stdout.write(self.style.SUCCESS("Демо-данные сайта готовы."))
+            self.stdout.write(
+                f"Администратор: {admin_user.username} / "
+                f"{os.environ.get('DEMO_ADMIN_PASSWORD', 'SkazkaAdmin2026!')}"
+            )
+            self.stdout.write(
+                f"Ученик: {vera.username} / "
+                f"{os.environ.get('DEMO_STUDENT_PASSWORD', 'SkazkaStudent2026!')}"
+            )
 
     def ensure_user(
         self,
