@@ -3,9 +3,8 @@ services:
     name: severnaya-skazka
     runtime: python
     plan: free
-    buildCommand: pip install -r requirements.txt
-    preDeployCommand: python manage.py collectstatic --noinput && python manage.py migrate
-    startCommand: gunicorn folk_school.wsgi:application
+    buildCommand: pip install -r requirements.txt && python manage.py collectstatic --noinput
+    startCommand: sh -c 'python manage.py migrate && gunicorn folk_school.wsgi:application'
     envVars:
       - key: SECRET_KEY
         generateValue: true
